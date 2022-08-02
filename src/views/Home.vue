@@ -1,18 +1,30 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-container>
+    <v-btn v-for="workstation in workstations" :key="workstation.id" x-large :to="{name: 'Production', params: { id: workstation.id}}">
+      {{ workstation.name }}
+    </v-btn>
+  </v-container>
+
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import { onMounted } from "vue";
 
-export default {
-  name: 'Home',
-  components: {
-    HelloWorld
+@Component
+export default class Home extends Vue {
+
+  private workstations = [];
+
+  mounted() {
+    Vue.axios.get('/api/weighing/workstations')
+        .then(ws => this.workstations = ws.data);
   }
+
+
 }
 </script>
+
+<style lang="scss" scoped>
+
+</style>
