@@ -102,7 +102,10 @@
           <v-divider />
 
 
-          <AssignmentCard v-if="plannedProductionRun && plannedProductionRunAssignedComponent(scale)" :assigned-component="plannedProductionRunAssignedComponent(scale)" :production-run-id="plannedProductionRun.id" @updated="loadProductionRuns">
+          <AssignmentCard
+              v-if="plannedProductionRun && plannedProductionRunAssignedComponent(scale)"
+              :assigned-component="plannedProductionRunAssignedComponent(scale)"
+              :production-run-id="plannedProductionRun.id" @updated="loadProductionRuns">
             <template v-slot:footer>
               <v-card-actions class="justify-end">
                 <v-btn color="error" block @click="unassign(plannedProductionRunAssignedComponent(scale))">
@@ -132,6 +135,7 @@
             :scale="scale" :assigned-component="runningProductionRunAssignedComponent(scale)"
             :production-run-id="runningProductionRun.id"
             compact
+            :editable="false"
         />
 
       </div>

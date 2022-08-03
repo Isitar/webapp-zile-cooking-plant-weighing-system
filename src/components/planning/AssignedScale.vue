@@ -9,7 +9,14 @@
       {{ scale.name }}
     </v-card-title>
 
-    <AssignmentCard v-if="assignedComponent" :production-run-id="productionRunId" :assigned-component="assignedComponent" :compact="compact" />
+    <AssignmentCard v-if="assignedComponent"
+                    :production-run-id="productionRunId"
+                    :assigned-component="assignedComponent"
+                    :compact="compact"
+                    :editable="editable"
+                    @updated="$emit('updated')"
+
+    />
     <slot name="after"/>
   </v-card>
 </template>
@@ -33,6 +40,9 @@ export default class AssignedScale extends Vue {
 
   @Prop({type: Boolean, default: false})
   public compact!: boolean;
+
+  @Prop({type: Boolean, default: true})
+  public editable!: boolean;
 
   private editMode =false;
 

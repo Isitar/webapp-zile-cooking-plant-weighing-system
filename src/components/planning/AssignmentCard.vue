@@ -6,8 +6,8 @@
       <v-card-subtitle> {{ assignedComponent.component.item.name }}</v-card-subtitle>
 
     <v-divider />
-    <v-card-text class="pa-0" v-if="!compact">
-      <v-list dense>
+    <v-card-text class="pa-0" v-if="!compact || editable">
+      <v-list dense v-if="!compact">
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>Obere Toleranz</v-list-item-title>
@@ -26,7 +26,9 @@
             <v-list-item-subtitle>{{ assignedComponent.lowerTolerance }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item>
+      </v-list>
+      <v-list v-if="editable" dense>
+        <v-list-item >
           <v-list-item-content v-if="!editMode">
             <v-list-item-title>Messung über Sekunden</v-list-item-title>
             <v-list-item-subtitle>{{ assignedComponent.deltaT }}</v-list-item-subtitle>
@@ -65,6 +67,10 @@ export default class AssignmentCard extends Vue {
   public assignedComponent!: ProductionRunAssignment;
   @Prop({ type: String, required: true })
   public productionRunId!: string;
+
+  @Prop({type: Boolean, default: true})
+  public editable!: boolean;
+
   private editMode = false;
 
   private updatedDeltaT = 0;

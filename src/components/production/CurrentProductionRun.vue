@@ -35,6 +35,7 @@
             :scale="scale" :assigned-component="assignedComponent(scale)"
             :production-run-id="productionRun.id"
             compact
+            @updated="loadProductionRuns"
 
         >
           <template v-slot:after
@@ -59,6 +60,7 @@ import ProductionScale from "@/models/production/ProductionScale";
 import ProductionWorkstation from "@/models/production/ProductionWorkstation";
 import AssignedScale from "@/components/planning/AssignedScale.vue";
 import ScaleBox from "@/components/production/ScaleBox.vue";
+const scaleRefreshrate = 2000;
 
 @Component({
   components: { ScaleBox, AssignedScale }
@@ -73,9 +75,11 @@ export default class PlanNewProductionRun extends Vue {
   private flowPerHour = 0;
   private scaleData = [];
 
+
   private scaleTimeout: number | null = null;
 
   private loadProductionRuns() {
+    console.log('hello prod runs get loaded!');
     Vue.axios.get<ProductionRun[]>(`api/production/workstations/${this.workstation.id}/production-runs`)
         .then(res => this.productionRun = res.data.filter((pr: ProductionRun) => pr.productionRunState == 1)[0])
         .then(() => this.flowPerHour = this.productionRun!.expectedFlowPerHour)
@@ -84,7 +88,7 @@ export default class PlanNewProductionRun extends Vue {
             clearTimeout(this.scaleTimeout);
           }
           if (this.productionRun !== null) {
-            this.scaleTimeout = setTimeout(this.loadScaleValues, 1000);
+            this.scaleTimeout = setTimeout(this.loadScaleValues, scaleRefreshrate);
           }
         });
   }
@@ -110,7 +114,7 @@ export default class PlanNewProductionRun extends Vue {
       );
     });
     Promise.all(promises)
-        .finally(() => this.scaleTimeout = setTimeout(this.loadScaleValues, 1000))
+        .finally(() => this.scaleTimeout = setTimeout(this.loadScaleValues, scaleRefreshrate))
     ;
   }
 
@@ -141,7 +145,6 @@ export default class PlanNewProductionRun extends Vue {
   }
 
   private scaleValue(scale: ProductionScale): number {
-    console.log('scaledata called', this.scaleData);
     return this.scaleData.find(s => s.scaleId === scale.id)?.val ?? 0;
   }
 }
