@@ -30,7 +30,7 @@
               :y1="getYPercentStr(lowerTolerance)" :y2="getYPercentStr(lowerTolerance)" />
         <text x="10%" :y="getYPercentStr(lowerTolerance)" text-anchor="start" dominant-baseline="ideographic">{{ lowerTolerance.toFixed(3) }}</text>
       </svg>
-      <p v-if="currentValue < minValue" class="text-center">{{currentValue.toFixed(3)}}</p>
+      <p class="text-center">{{currentValue.toFixed(3)}}</p>
     </v-card-text>
   </v-card>
 </template>

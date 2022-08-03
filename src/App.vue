@@ -11,6 +11,8 @@
       >
         <v-icon>mdi-home</v-icon>
       </v-app-bar-nav-icon>
+
+
       <v-app-bar-title>
         Zile Bonbons AG
       </v-app-bar-title>

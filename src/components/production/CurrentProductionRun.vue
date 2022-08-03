@@ -39,7 +39,7 @@
         >
           <template v-slot:after
                     v-if="assignedComponent(scale)">
-            <ScaleBox :current-value="scaleValue(scale)"
+            <ScaleBox :current-value="scaleValues[scale.id]"
                       :lower-tolerance="assignedComponent(scale).lowerTolerance"
                       :upper-tolerance="assignedComponent(scale).upperTolerance"
                       :target-value="assignedComponent(scale).expectedFlow"
@@ -99,17 +99,25 @@ export default class PlanNewProductionRun extends Vue {
 
       promises.push(
           Vue.axios.get(`api/weighing/scales/${scale.id}/flow?t=${assignment.deltaT}`)
-              .then(res => this.scaleValues[scale.id] = res.data)
+              .then(res => {
+                console.log('received', res);
+                  Vue.set(this.scaleValues, scale.id, res.data * 60 * 60);
+
+              })
       );
     });
     Promise.all(promises)
         .finally(() => this.scaleTimeout = setTimeout(this.loadScaleValues, 1000))
-        ;
+    ;
   }
 
   mounted() {
+    this.scales.forEach(s => {
+      this.scaleValues[s.id] = 0;
+    });
     this.loadProductionRuns()
   }
+
   unmounted() {
     console.log('unmounted');
     if (this.scaleTimeout !== null) {
