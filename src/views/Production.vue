@@ -1,39 +1,40 @@
 <template>
-  <v-container v-if="workstation">
-    <div>Production {{ workstation.name }}</div>
+  <div>
+    <v-toolbar dense>
+      <v-tabs
+          fixed-tabs
+          v-model="tab"
+      >
+        <v-tab>
 
-    <v-tabs
-        fixed-tabs
-        centered
-        v-model="tab"
-    >
-      <v-tab>
-        Planung
-      </v-tab>
-      <v-tab>
-        Produktion
-      </v-tab>
+          Planung
+        </v-tab>
+        <v-tab>Produktion</v-tab>
 
-    </v-tabs>
-    <v-tabs-items v-model="tab">
-      <v-tab-item>
-        <PlanNewProductionRun :workstation="workstation" />
-      </v-tab-item>
-      <v-tab-item>
-        prod
-      </v-tab-item>
-    </v-tabs-items>
+      </v-tabs>
+    </v-toolbar>
+    <v-container v-if="workstation">
+      <v-tabs-items v-model="tab">
+        <v-tab-item>
+          <PlanNewProductionRun :workstation="workstation" />
+        </v-tab-item>
+        <v-tab-item>
+          <CurrentProductionRun :workstation="workstation" />
+        </v-tab-item>
+      </v-tabs-items>
 
-  </v-container>
-
+    </v-container>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import PlanNewProductionRun from "@/components/planning/PlanNewProductionRun.vue";
+import ProductionWorkstation from "@/models/production/ProductionWorkstation";
+import CurrentProductionRun from "@/components/production/CurrentProductionRun.vue";
 
 @Component({
-  components: { PlanNewProductionRun }
+  components: { CurrentProductionRun, PlanNewProductionRun }
 })
 export default class Production extends Vue {
 
@@ -45,7 +46,7 @@ export default class Production extends Vue {
 
   public mounted() {
     Vue.axios.get('api/weighing/workstations')
-        .then(res => this.workstation = res.data.filter(ws => ws.id === this.id)[0]);
+        .then(res => this.workstation = res.data.filter((ws: ProductionWorkstation) => ws.id === this.id)[0]);
   }
 
 }
