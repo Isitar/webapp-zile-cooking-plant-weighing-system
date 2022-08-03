@@ -39,7 +39,7 @@
         >
           <template v-slot:after
                     v-if="assignedComponent(scale)">
-            <ScaleBox :current-value="scaleValues[scale.id]"
+            <ScaleBox :current-value="scaleValue(scale)"
                       :lower-tolerance="assignedComponent(scale).lowerTolerance"
                       :upper-tolerance="assignedComponent(scale).upperTolerance"
                       :target-value="assignedComponent(scale).expectedFlow"
@@ -69,9 +69,9 @@ export default class PlanNewProductionRun extends Vue {
   public workstation!: ProductionWorkstation;
 
   private editMode = false;
-  private scaleValues: { [scaleId: string]: number } = {};
   private productionRun: ProductionRun | null = null;
   private flowPerHour = 0;
+  private scaleData = [];
 
   private scaleTimeout: number | null = null;
 
@@ -100,8 +100,11 @@ export default class PlanNewProductionRun extends Vue {
       promises.push(
           Vue.axios.get(`api/weighing/scales/${scale.id}/flow?t=${assignment.deltaT}`)
               .then(res => {
-                console.log('received', res);
-                  Vue.set(this.scaleValues, scale.id, res.data * 60 * 60);
+                const existingScaleData = this.scaleData.find(s => s.scaleId === scale.id) ?? null;
+                if (existingScaleData !== null) {
+                  this.scaleData.splice(this.scaleData.indexOf(existingScaleData));
+                }
+                this.scaleData.push({ scaleId: scale.id, val: res.data });
 
               })
       );
@@ -112,9 +115,6 @@ export default class PlanNewProductionRun extends Vue {
   }
 
   mounted() {
-    this.scales.forEach(s => {
-      this.scaleValues[s.id] = 0;
-    });
     this.loadProductionRuns()
   }
 
@@ -141,10 +141,8 @@ export default class PlanNewProductionRun extends Vue {
   }
 
   private scaleValue(scale: ProductionScale): number {
-    if (Object.keys(this.scaleValues).find(k => k === scale.id)) {
-      return this.scaleValues[scale.id] ?? 0;
-    }
-    return 0;
+    console.log('scaledata called', this.scaleData);
+    return this.scaleData.find(s => s.scaleId === scale.id)?.val ?? 0;
   }
 }
 </script>
