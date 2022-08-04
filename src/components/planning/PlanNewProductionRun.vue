@@ -145,12 +145,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
 import AssignedScale from "@/components/planning/AssignedScale.vue";
 import AssignmentCard from "@/components/planning/AssignmentCard.vue";
 import ProductionWorkstation from "@/models/production/ProductionWorkstation";
-import ProductionOrder, { ProductionOrderComponent } from "@/models/production/ProductionOrder";
-import ProductionRun from "@/models/production/ProductionRun";
+import ProductionOrder, {ProductionOrderComponent} from "@/models/production/ProductionOrder";
+import ProductionRun, {ProductionRunAssignment} from "@/models/production/ProductionRun";
 import ProductionScale from "@/models/production/ProductionScale";
 
 @Component({
@@ -224,10 +224,8 @@ export default class PlanNewProductionRun extends Vue {
         .then(this.loadProductionRuns);
   }
 
-  private unassign(assignment) {
-    Vue.axios.delete(`api/production/production-runs/${this.plannedProductionRun?.id}/assignments/${assignment.id}`, {
-      flow: this.flowPerHour
-    })
+  private unassign(assignment: ProductionRunAssignment) {
+    Vue.axios.delete(`api/production/production-runs/${this.plannedProductionRun?.id}/assignments/${assignment.id}`)
         .then(this.loadProductionRuns);
 
   }
@@ -236,17 +234,14 @@ export default class PlanNewProductionRun extends Vue {
   private currentDrag: ProductionOrderComponent | null = null;
 
   private dragStart(component: ProductionOrderComponent) {
-    console.log('drag started for ', component);
     this.currentDrag = component;
   }
 
   private dragEnd(component: ProductionOrderComponent) {
-    console.log('dragEnd');
     this.currentDrag = null;
   }
 
   private dropped(scale: ProductionScale) {
-    console.log(this.currentDrag);
     Vue.axios.post(`api/production/production-runs/${this.plannedProductionRun?.id}/assignments`, {
       scaleId: scale.id,
       lineNumber: this.currentDrag?.lineNumber,

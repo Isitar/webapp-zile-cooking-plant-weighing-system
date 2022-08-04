@@ -73,16 +73,15 @@ export default class PlanNewProductionRun extends Vue {
   private editMode = false;
   private productionRun: ProductionRun | null = null;
   private flowPerHour = 0;
-  private scaleData = [];
+  private scaleData: {scaleId: string; val: number}[] = [];
 
 
   private scaleTimeout: number | null = null;
 
   private loadProductionRuns() {
-    console.log('hello prod runs get loaded!');
     Vue.axios.get<ProductionRun[]>(`api/production/workstations/${this.workstation.id}/production-runs`)
         .then(res => this.productionRun = res.data.filter((pr: ProductionRun) => pr.productionRunState == 1)[0])
-        .then(() => this.flowPerHour = this.productionRun!.expectedFlowPerHour)
+        .then(() => this.flowPerHour = this.productionRun?.expectedFlowPerHour ?? 0)
         .then(() => {
           if (this.scaleTimeout !== null) {
             clearTimeout(this.scaleTimeout);
@@ -109,7 +108,6 @@ export default class PlanNewProductionRun extends Vue {
                   this.scaleData.splice(this.scaleData.indexOf(existingScaleData));
                 }
                 this.scaleData.push({ scaleId: scale.id, val: res.data });
-
               })
       );
     });
@@ -123,7 +121,6 @@ export default class PlanNewProductionRun extends Vue {
   }
 
   unmounted() {
-    console.log('unmounted');
     if (this.scaleTimeout !== null) {
       clearTimeout(this.scaleTimeout);
     }
