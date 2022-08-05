@@ -1,34 +1,36 @@
 <template>
 
-  <v-card class="ma-3" v-if="assignedComponent">
+  <v-card class="ma-3 mt-0 d-flex flex-column" v-if="assignedComponent">
 
-      <v-card-title>{{ assignedComponent.component.item.itemNo }}</v-card-title>
-      <v-card-subtitle> {{ assignedComponent.component.item.name }}</v-card-subtitle>
 
-    <v-divider />
-    <v-card-text class="pa-0" v-if="!compact || editable">
-      <v-list dense v-if="!compact">
+    <v-card-text class="pa-0">
+      <v-list dense>
         <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="overline"> {{ assignedComponent.component.item.itemNo }}</v-list-item-title>
+            <v-list-item-subtitle> {{ assignedComponent.component.item.name }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item v-if="!compact">
           <v-list-item-content>
             <v-list-item-title>Obere Toleranz</v-list-item-title>
             <v-list-item-subtitle>{{ assignedComponent.upperTolerance }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item>
-          <v-list-item-content>
+        <v-list-item v-if="!compact">
+          <v-list-item-content >
             <v-list-item-title>Zielwert</v-list-item-title>
             <v-list-item-subtitle>{{ assignedComponent.expectedFlow }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item>
-          <v-list-item-content>
+        <v-list-item v-if="!compact">
+          <v-list-item-content >
             <v-list-item-title>Untere Toleranz</v-list-item-title>
             <v-list-item-subtitle>{{ assignedComponent.lowerTolerance }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-      </v-list>
-      <v-list v-if="editable" dense>
-        <v-list-item >
+        <v-list-item v-if="editable">
           <v-list-item-content v-if="!editMode">
             <v-list-item-title>Messung über Sekunden</v-list-item-title>
             <v-list-item-subtitle>{{ assignedComponent.deltaT }}</v-list-item-subtitle>
@@ -50,22 +52,22 @@
         </v-list-item>
       </v-list>
     </v-card-text>
-    <slot name="footer" />
+    <slot name="footer"/>
   </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { ProductionRunAssignment } from "@/models/production/ProductionRun";
+import {Component, Prop, Vue} from 'vue-property-decorator';
+import {ProductionRunAssignment} from "@/models/production/ProductionRun";
 
 @Component
 export default class AssignmentCard extends Vue {
 
-  @Prop({ type: Boolean, default: false })
+  @Prop({type: Boolean, default: false})
   public compact!: boolean;
-  @Prop({ type: Object, required: true })
+  @Prop({type: Object, required: true})
   public assignedComponent!: ProductionRunAssignment;
-  @Prop({ type: String, required: true })
+  @Prop({type: String, required: true})
   public productionRunId!: string;
 
   @Prop({type: Boolean, default: true})

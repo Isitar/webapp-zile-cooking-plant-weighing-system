@@ -4,6 +4,7 @@
         app
         color="primary"
         dark
+        dense
     >
       <v-app-bar-nav-icon
           @click="$router.push({name: 'Home'})"

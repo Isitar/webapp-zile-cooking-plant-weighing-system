@@ -1,7 +1,7 @@
 <template>
-  <v-card>
-    <v-card-text>
-      <svg>
+  <div class="outer">
+
+      <svg class="pa-3">
         <rect x="0" y="0" width="100%" height="100%" stroke="black" stroke-width="2" fill="white">
 
         </rect>
@@ -31,8 +31,8 @@
         <text x="10%" :y="getYPercentStr(lowerTolerance)" text-anchor="start" dominant-baseline="ideographic">{{ lowerTolerance.toFixed(3) }}</text>
       </svg>
       <p class="text-center">{{currentValue.toFixed(3)}}</p>
-    </v-card-text>
-  </v-card>
+
+  </div>
 </template>
 
 <script lang="ts">
@@ -79,10 +79,19 @@ export default class ScaleBox extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-svg {
-  height: 100%;
-  width: 100%;
+
+.outer {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  > svg {
+    flex: 1 0 auto;
+  }
+  > * {
+    flex: 0 0 auto;
+  }
 }
+
 
 .background {
   fill: white;

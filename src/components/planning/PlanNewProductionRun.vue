@@ -99,7 +99,7 @@
           <v-card-title>
             {{ scale.name }}
           </v-card-title>
-          <v-divider />
+          <v-divider class="my-3" />
 
 
           <AssignmentCard
@@ -115,8 +115,8 @@
             </template>
           </AssignmentCard>
 
-          <v-card class="ma-3" v-else>
-            <v-card-text class="text-center py-10" v-if="currentDrag && canDrop(scale)" @drop.prevent="dropped(scale)" @dragover.prevent>
+          <v-card class="ma-3 d-flex flex-column" v-else>
+            <v-card-text class="text-center py-10 grow flex-auto" v-if="canDrop(scale) && currentDrag" @drop.prevent="dropped(scale)" @dragover.prevent>
               Hierhin ziehen
             </v-card-text>
           </v-card>
@@ -251,17 +251,18 @@ export default class PlanNewProductionRun extends Vue {
 
   private startProductionRun() {
     Vue.axios.post(`api/production/production-runs/${this.plannedProductionRun?.id}/start`)
-        .then(this.loadProductionRuns);
+        .then(() => location.reload());
   }
 
   private loadProductionRuns() {
     Vue.axios.get(`api/production/workstations/${this.workstation.id}/production-runs`)
-        .then(res => this.productionRuns = res.data);
+        .then(res => {
+          this.productionRuns = res.data
+        });
   }
 
   private canDrop(scale: ProductionScale): boolean {
-    return (this.currentDrag?.isFluid ?? false) && scale.canFluid
-        || (this.currentDrag?.isSolid ?? false) && scale.canSolid;
+    return true;
   }
 }
 </script>

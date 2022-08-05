@@ -1,5 +1,5 @@
 <template>
-  <div v-if="productionRun">
+  <div v-if="productionRun" class="d-flex flex-column">
     <v-card width="50%" class="my-3">
       <v-list-item dense>
         <v-list-item-content v-if="!editMode">
@@ -29,14 +29,14 @@
 
     </v-card>
 
-    <div class="cards">
-      <div v-for="scale in scales" :key="scale.id">
+    <div class="cards grow flex-auto d-flex flex-row">
+      <div v-for="scale in scales" :key="scale.id" class="flex-auto grow d-flex flex-column">
         <AssignedScale
             :scale="scale" :assigned-component="assignedComponent(scale)"
             :production-run-id="productionRun.id"
             compact
             @updated="loadProductionRuns"
-
+            class="grow flex-auto"
         >
           <template v-slot:after
                     v-if="assignedComponent(scale)">
@@ -44,7 +44,7 @@
                       :lower-tolerance="assignedComponent(scale).lowerTolerance"
                       :upper-tolerance="assignedComponent(scale).upperTolerance"
                       :target-value="assignedComponent(scale).expectedFlow"
-                      class="ma-3"
+                      class="ma-3 grow flex-auto"
             />
           </template>
         </AssignedScale>
@@ -148,12 +148,20 @@ export default class PlanNewProductionRun extends Vue {
 </script>
 <style lang="scss" scoped>
 .cards {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(25px, 1fr));
   gap: 25px;
   flex-wrap: wrap;
 
   > * {
     flex: 1 0 calc(12.5% - 25px);
+  }
+}
+
+.scale-intern {
+  min-height: 30vh;
+  > * {
+    flex: 1 0 auto;
   }
 }
 </style>

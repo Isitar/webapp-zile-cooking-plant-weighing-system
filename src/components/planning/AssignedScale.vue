@@ -1,13 +1,15 @@
 <template>
   <v-card outlined
-          class="lighten-3"
+          class="lighten-3 d-flex flex-column"
           :class="{
           'blue': scale.canFluid,
           'grey': scale.canSolid
-        }">
+        }"
+  >
     <v-card-title>
       {{ scale.name }}
     </v-card-title>
+
 
     <AssignmentCard v-if="assignedComponent"
                     :production-run-id="productionRunId"
