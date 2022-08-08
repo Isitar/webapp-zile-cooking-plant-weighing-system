@@ -15,13 +15,18 @@
                   @change="updateProductionOrder"
               >
                 <template v-slot:selection="data">
-                  {{ data.item.productionOrderNumber }} ({{ data.item.outputItem.itemNo }} {{ data.item.outputItem.name }})
+                  {{ data.item.productionOrderNumber }} ({{ data.item.outputItem.itemNo }} {{
+                    data.item.outputItem.name
+                  }})
                 </template>
 
                 <template v-slot:item="data">
                   <v-list-item-content>
                     <v-list-item-title>{{ data.item.productionOrderNumber }}</v-list-item-title>
-                    <v-list-item-subtitle> {{ data.item.outputItem.itemNo }} {{ data.item.outputItem.name }}</v-list-item-subtitle>
+                    <v-list-item-subtitle> {{ data.item.outputItem.itemNo }} {{
+                        data.item.outputItem.name
+                      }}
+                    </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
 
@@ -88,7 +93,7 @@
           </v-card>
         </div>
       </template>
-      <v-divider class="my-3" />
+      <v-divider class="my-3"/>
       <div class="cards">
         <v-card v-for="scale in scales" :key="scale.id" outlined
                 class="lighten-3"
@@ -99,7 +104,7 @@
           <v-card-title>
             {{ scale.name }}
           </v-card-title>
-          <v-divider class="my-3" />
+          <v-divider class="my-3"/>
 
 
           <AssignmentCard
@@ -116,18 +121,19 @@
           </AssignmentCard>
 
           <v-card class="ma-3 d-flex flex-column" v-else>
-            <v-card-text class="text-center py-10 grow flex-auto" v-if="canDrop(scale) && currentDrag" @drop.prevent="dropped(scale)" @dragover.prevent>
+            <v-card-text class="text-center py-10 grow flex-auto" v-if="canDrop(scale) && currentDrag"
+                         @drop.prevent="dropped(scale)" @dragover.prevent>
               Hierhin ziehen
             </v-card-text>
           </v-card>
         </v-card>
       </div>
     </v-form>
-    <v-divider class="my-3" />
+    <v-divider class="my-3"/>
     <v-btn block color="success" @click="startProductionRun">Übernehmen</v-btn>
 
     <template v-if="runningProductionRun">
-      <v-divider class="my-3" />
+      <v-divider class="my-3"/>
       <h2 class="mb-3">Aktuelle Produktion</h2>
       <div class="cards">
         <AssignedScale
@@ -154,10 +160,10 @@ import ProductionRun, {ProductionRunAssignment} from "@/models/production/Produc
 import ProductionScale from "@/models/production/ProductionScale";
 
 @Component({
-  components: { AssignedScale, AssignmentCard }
+  components: {AssignedScale, AssignmentCard}
 })
 export default class PlanNewProductionRun extends Vue {
-  @Prop({ type: Object, required: true })
+  @Prop({type: Object, required: true})
   public workstation!: ProductionWorkstation;
 
   private selectedFANo: string | null = null;
@@ -173,9 +179,8 @@ export default class PlanNewProductionRun extends Vue {
 
   public mounted() {
     Vue.axios.get('api/production/production-orders')
-        .then(res => this.fas = res.data);
-
-    this.loadProductionRuns();
+        .then(res => this.fas = res.data)
+        .then(() => this.loadProductionRuns());
   }
 
   private get selectedFA(): ProductionOrder | null {
@@ -190,9 +195,9 @@ export default class PlanNewProductionRun extends Vue {
   private onProdRunChanged() {
     this.plannedProductionRun = this.productionRuns.find(pr => pr.productionRunState === 0) ?? null;
     if (this.plannedProductionRun !== null) {
-      this.selectedFANo = this.plannedProductionRun.productionOrder.productionOrderNumber;
+      this.selectedFANo = this.plannedProductionRun.productionOrder?.productionOrderNumber;
       this.flowPerHour = this.plannedProductionRun.expectedFlowPerHour;
-    } else {
+    } else if (this.fas.length > 0) {
       Vue.axios.post(`api/production/workstations/${this.workstation.id}/production-runs`, {
         productionOrderNo: this.fas[0].productionOrderNumber,
         flowPerHour: 500,

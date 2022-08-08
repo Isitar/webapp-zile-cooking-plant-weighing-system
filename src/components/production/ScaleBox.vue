@@ -9,7 +9,7 @@
             'red': currentValue < lowerTolerance || currentValue > upperTolerance,
             'green':currentValue > lowerTolerance && currentValue < upperTolerance
     }"
-              :y="getYPercentStr(currentValue)" width="100%" :height="`${100 - getYPercent(currentValue)}%`"
+              :y="getYPercentStr(currentValue)" width="100%" :height="`${Math.max(0, 100 - getYPercent(currentValue))}%`"
         />
         <text x="90%" :y="getYPercentStr(currentValue)" text-anchor="end" dominant-baseline="ideographic">{{ currentValue.toFixed(3) }}</text>
 
