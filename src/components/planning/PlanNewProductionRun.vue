@@ -53,7 +53,6 @@
                   @dragstart="dragStart(component)"
                   draggable
                   @dragend="dragEnd(component)"
-
           >
             <v-card-title>{{ component.item.itemNo }} {{ component.item.name }}</v-card-title>
             <v-card-text class="pa-0">
@@ -202,6 +201,7 @@ export default class PlanNewProductionRun extends Vue {
         productionOrderNo: this.fas[0].productionOrderNumber,
         flowPerHour: 500,
       })
+          .then(() => this.loadProductionRuns());
     }
 
     this.runningProductionRun = this.productionRuns.find(pr => pr.productionRunState === 1) ?? null;

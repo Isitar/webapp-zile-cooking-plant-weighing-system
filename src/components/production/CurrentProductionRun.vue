@@ -1,33 +1,46 @@
 <template>
   <div v-if="productionRun" class="d-flex flex-column">
-    <v-card width="50%" class="my-3">
-      <v-list-item dense>
-        <v-list-item-content v-if="!editMode">
-          <v-list-item-title>Produktion kg /h</v-list-item-title>
-          <v-list-item-subtitle>{{ flowPerHour }}</v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-content v-else>
-          <v-text-field
-              label="Prodkution kg /h"
-              v-model="flowPerHour"
-          />
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-list-item-action-text>
-            <v-btn @click="editMode = true" v-if="!editMode" icon small>
-              <v-icon small>mdi-pen</v-icon>
-            </v-btn>
-            <v-btn @click="updateProdPerHour" v-if="editMode" icon small color="success">
-              <v-icon small>mdi-content-save</v-icon>
-            </v-btn>
-            <v-btn @click="editMode = false" v-if="editMode" icon small>
-              <v-icon small>mdi-cancel</v-icon>
-            </v-btn>
-          </v-list-item-action-text>
-        </v-list-item-action>
-      </v-list-item>
-
-    </v-card>
+    <v-row class="mb-3 info-cards">
+      <v-col>
+        <v-card>
+          <v-list-item dense>
+            <v-list-item-content v-if="!editMode">
+              <v-list-item-title>{{ productionRun.productionOrder.productionOrderNumber }}</v-list-item-title>
+              <v-list-item-subtitle>{{ productionRun.productionOrder.outputItem.name }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-card>
+          <v-list-item dense>
+            <v-list-item-content v-if="!editMode">
+              <v-list-item-title>Produktion kg /h</v-list-item-title>
+              <v-list-item-subtitle>{{ flowPerHour }}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-content v-else>
+              <v-text-field
+                  label="Prodkution kg /h"
+                  v-model="flowPerHour"
+              />
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-list-item-action-text>
+                <v-btn @click="editMode = true" v-if="!editMode" icon small>
+                  <v-icon small>mdi-pen</v-icon>
+                </v-btn>
+                <v-btn @click="updateProdPerHour" v-if="editMode" icon small color="success">
+                  <v-icon small>mdi-content-save</v-icon>
+                </v-btn>
+                <v-btn @click="editMode = false" v-if="editMode" icon small>
+                  <v-icon small>mdi-cancel</v-icon>
+                </v-btn>
+              </v-list-item-action-text>
+            </v-list-item-action>
+          </v-list-item>
+        </v-card>
+      </v-col>
+    </v-row>
 
     <div class="cards grow flex-auto d-flex flex-row">
       <div v-for="scale in scales" :key="scale.id" class="flex-auto grow d-flex flex-column">
@@ -54,26 +67,29 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import ProductionRun, { ProductionRunAssignment } from "@/models/production/ProductionRun";
+import {Component, Prop, Vue} from 'vue-property-decorator';
+import ProductionRun, {ProductionRunAssignment} from "@/models/production/ProductionRun";
 import ProductionScale from "@/models/production/ProductionScale";
 import ProductionWorkstation from "@/models/production/ProductionWorkstation";
 import AssignedScale from "@/components/planning/AssignedScale.vue";
 import ScaleBox from "@/components/production/ScaleBox.vue";
+import ScaleMeasurementsGraph from "@/components/production/ScaleMeasurementsGraph.vue";
+
 const scaleRefreshrate = 2000;
 
 @Component({
-  components: { ScaleBox, AssignedScale }
+  components: {ScaleMeasurementsGraph, ScaleBox, AssignedScale}
 })
 export default class PlanNewProductionRun extends Vue {
 
-  @Prop({ type: Object, required: true })
+  @Prop({type: Object, required: true})
   public workstation!: ProductionWorkstation;
 
+  private dialogOpen = false;
   private editMode = false;
   private productionRun: ProductionRun | null = null;
   private flowPerHour = 0;
-  private scaleData: {scaleId: string; val: number}[] = [];
+  private scaleData: { scaleId: string; val: number }[] = [];
 
 
   private scaleTimeout: number | null = null;
@@ -105,9 +121,10 @@ export default class PlanNewProductionRun extends Vue {
               .then(res => {
                 const existingScaleData = this.scaleData.find(s => s.scaleId === scale.id) ?? null;
                 if (existingScaleData !== null) {
-                  this.scaleData.splice(this.scaleData.indexOf(existingScaleData));
+                  this.scaleData.find(s => s.scaleId === scale.id).val = res.data;
+                } else {
+                  this.scaleData.push({scaleId: scale.id, val: res.data});
                 }
-                this.scaleData.push({ scaleId: scale.id, val: res.data });
               })
       );
     });
@@ -138,7 +155,10 @@ export default class PlanNewProductionRun extends Vue {
     Vue.axios.put(`api/production/production-runs/${this.productionRun?.id}/flow`, {
       flow: this.flowPerHour
     })
-        .then(this.loadProductionRuns);
+        .then(() => {
+          this.loadProductionRuns();
+          this.editMode = false;
+        });
   }
 
   private scaleValue(scale: ProductionScale): number {
@@ -160,8 +180,13 @@ export default class PlanNewProductionRun extends Vue {
 
 .scale-intern {
   min-height: 30vh;
+
   > * {
     flex: 1 0 auto;
   }
+}
+
+.info-cards {
+  flex: 0 0 auto;
 }
 </style>
