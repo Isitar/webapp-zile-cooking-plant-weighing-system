@@ -7,10 +7,10 @@
             v-model="tab"
         >
           <v-tab>
-
             Planung
           </v-tab>
           <v-tab>Produktion</v-tab>
+          <v-tab>Tara</v-tab>
 
         </v-tabs>
       </v-toolbar>
@@ -26,6 +26,11 @@
               <CurrentProductionRun :workstation="workstation" class="grow flex-auto"/>
             </div>
           </v-tab-item>
+          <v-tab-item class="fill-height">
+            <div class="fill-height d-flex flex-column">
+              <TaraControl :workstation="workstation" class="grow flex-auto" />
+            </div>
+          </v-tab-item>
         </v-tabs-items>
 
       </v-container>
@@ -38,9 +43,10 @@ import {Component, Prop, Vue} from 'vue-property-decorator';
 import PlanNewProductionRun from "@/components/planning/PlanNewProductionRun.vue";
 import ProductionWorkstation from "@/models/production/ProductionWorkstation";
 import CurrentProductionRun from "@/components/production/CurrentProductionRun.vue";
+import TaraControl from "@/components/tara/TaraControl.vue";
 
 @Component({
-  components: {CurrentProductionRun, PlanNewProductionRun}
+  components: {CurrentProductionRun, PlanNewProductionRun, TaraControl}
 })
 export default class Production extends Vue {
 
