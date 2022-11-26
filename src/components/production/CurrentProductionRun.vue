@@ -137,7 +137,7 @@ export default class PlanNewProductionRun extends Vue {
     this.loadProductionRuns()
   }
 
-  unmounted() {
+  beforeUnmount() {
     if (this.scaleTimeout !== null) {
       clearTimeout(this.scaleTimeout);
     }

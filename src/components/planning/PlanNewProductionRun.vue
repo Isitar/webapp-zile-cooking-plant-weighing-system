@@ -48,7 +48,7 @@
                   class="lighten-3"
                   :class="{
           'blue': component.isFluid,
-          'grey': component.isSolid
+          'purple': component.isSolid
         }"
                   @dragstart="dragStart(component)"
                   draggable
@@ -98,7 +98,7 @@
                 class="lighten-3"
                 :class="{
           'blue': scale.canFluid,
-          'grey': scale.canSolid
+          'purple': scale.canSolid
         }">
           <v-card-title>
             {{ scale.name }}
@@ -266,8 +266,8 @@ export default class PlanNewProductionRun extends Vue {
         });
   }
 
-  private canDrop(scale: ProductionScale): boolean {
-    return true;
+  private canDrop(scale: ProductionScale | null): boolean {
+    return scale !== null;
   }
 }
 </script>

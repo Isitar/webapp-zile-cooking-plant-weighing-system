@@ -4,16 +4,16 @@
             class="lighten-3"
             :class="{
           'blue': scale.canFluid,
-          'grey': scale.canSolid
+          'purple': scale.canSolid
         }">
       <v-card-title>
         {{ scale.name }}
       </v-card-title>
       <v-divider class="my-3"/>
-      <v-card-text class="title">{{ scaleValue(scale) }}</v-card-text>
-
+      <v-card-text class="title">{{ (scaleValue(scale) - scaleTara(scale)).toFixed(3) }}</v-card-text>
+<v-card-actions class="d-flex justify-center">
       <v-btn @click="setTara(scale)" large>Tara setzen</v-btn>
-
+</v-card-actions>
 
     </v-card>
   </div>
@@ -35,7 +35,7 @@ export default class TaraControl extends Vue {
 
   @Prop({type: Object, required: true})
   public workstation!: ProductionWorkstation;
-  private scaleData: { scaleId: string; val: number[], tara: number }[] = [];
+  private scaleData: { scaleId: string; val: {weight: number}[], tara: number }[] = [];
   private scaleTimeout: number | null = null;
   private scaleRefreshrate = 2000;
 
@@ -68,8 +68,17 @@ export default class TaraControl extends Vue {
     if (scaleDatas === null || scaleDatas === undefined ||scaleDatas.val.length === 0) {
       return 0;
     }
-    return scaleDatas.val.reduce((v, c) => v + c) / scaleDatas.val.length - scaleDatas.tara;
+    return scaleDatas.val.reduce((acc, val) => acc + val.weight, 0) / scaleDatas.val.length;
   }
+
+  private scaleTara(scale: ProductionScale): number {
+    var scaleDatas =this.scaleData.find(s => s.scaleId === scale.id);
+    if (scaleDatas === null || scaleDatas === undefined) {
+      return 0;
+    }
+    return scaleDatas.tara
+  }
+
 
   private setTara(scale: ProductionScale) {
     const existingScaleData = this.scaleData.find(s => s.scaleId === scale.id) ?? null;
@@ -84,7 +93,7 @@ export default class TaraControl extends Vue {
     this.loadScaleValues()
   }
 
-  unmounted() {
+  beforeUnmount() {
     if (this.scaleTimeout !== null) {
       clearTimeout(this.scaleTimeout);
     }

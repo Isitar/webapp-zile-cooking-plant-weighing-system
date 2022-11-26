@@ -3,7 +3,7 @@
           class="lighten-3 d-flex flex-column"
           :class="{
           'blue': scale.canFluid,
-          'grey': scale.canSolid
+          'purple': scale.canSolid
         }"
   >
     <v-card-title>

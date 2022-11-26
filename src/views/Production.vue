@@ -19,16 +19,17 @@
       <v-container v-if="workstation" fluid class="grow flex-auto">
         <v-tabs-items v-model="tab" class="height-100">
           <v-tab-item>
-            <PlanNewProductionRun :workstation="workstation"/>
+            <PlanNewProductionRun :workstation="workstation" v-if="tab === 0" />
           </v-tab-item>
           <v-tab-item class="fill-height">
             <div class="fill-height d-flex flex-column">
-              <CurrentProductionRun :workstation="workstation" class="grow flex-auto"/>
+              <CurrentProductionRun :workstation="workstation" class="grow flex-auto" v-if="tab === 1" />
             </div>
           </v-tab-item>
           <v-tab-item class="fill-height">
+            {{tab}}
             <div class="fill-height d-flex flex-column">
-              <TaraControl :workstation="workstation" class="grow flex-auto" />
+              <TaraControl :workstation="workstation" class="grow flex-auto" v-if="tab === 2" />
             </div>
           </v-tab-item>
         </v-tabs-items>
@@ -54,7 +55,7 @@ export default class Production extends Vue {
   public id!: string;
 
   private workstation = null;
-  private tab = 'planning';
+  private tab = 0;
 
   public mounted() {
     Vue.axios.get('api/weighing/workstations')
