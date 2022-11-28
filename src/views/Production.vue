@@ -27,7 +27,6 @@
             </div>
           </v-tab-item>
           <v-tab-item class="fill-height">
-            {{tab}}
             <div class="fill-height d-flex flex-column">
               <TaraControl :workstation="workstation" class="grow flex-auto" v-if="tab === 2" />
             </div>
