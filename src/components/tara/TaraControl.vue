@@ -43,7 +43,7 @@ export default class TaraControl extends Vue {
     const promises: Promise<void>[] = [];
     this.scales?.forEach(scale => {
       promises.push(
-          Vue.axios.get(`api/weighing/scales/${scale.id}/measurements?t=1`)
+          Vue.axios.get(`api/weighing/scales/${scale.id}/measurements?t=5`)
               .then(res => {
                 const existingScaleData = this.scaleData.find(s => s.scaleId === scale.id) ?? null;
                 if (existingScaleData !== null) {
